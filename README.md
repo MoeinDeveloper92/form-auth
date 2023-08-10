@@ -11,3 +11,5 @@ what is cookie parser=> in Nodejs, cookie parse is a middleware pacjage that pro
 When a client sends an HTTP request to the server, it can include cookies in the request headers. Cookies are snmall piece of data stored on the client side that use fot various purposes, such as session amangement, user authentication, and ktracking.
 
 the cookie parser, parses the cookie header from incoming HTTP request and makes the cookie data available in the req.cookie object in you application;s request handlers.
+////////////////////////
+fetchBaseQuery=>this is very small wrapper around fetch that aims to simplifies HTTP request. it isnjot a full-blown replaenm,ent for axios, superagent, or any other more heavyweight library, but it will cover the vast mejorty of your HTTP request needs.

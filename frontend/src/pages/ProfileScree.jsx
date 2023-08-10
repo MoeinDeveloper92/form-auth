@@ -1,29 +1,35 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from "framer-motion"
-import { useLoginMutation } from '../slices/usersApiSlice'
+import { toast } from "react-toastify"
 import { useSelector, useDispatch } from 'react-redux'
 import { setCredentials } from '../slices/authSlice'
-import { toast } from "react-toastify"
 import Loader from '../components/Loader'
-function LoginScreen() {
+import { useUpdateMutation } from '../slices/usersApiSlice'
+
+function ProfileScreen() {
     const [fomrData, setFormData] = useState({
+        name: "",
         email: "",
-        password: "",
+        password: ""
     })
-    const { email, password } = fomrData
+    const [update, { isLoading }] = useUpdateMutation()
+
+    const { name, email, password } = fomrData
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    //tp get the function to fire off our mutation
-    const [login, { isLoading }] = useLoginMutation()
-    const { userInfo } = useSelector((state) => state.auth)
 
+    const { userInfo } = useSelector((state) => state.auth)
+    //when we come to this page we want to set info in theinpur
     useEffect(() => {
-        if (userInfo) {
-            navigate("/")
-        }
-    }, [navigate, userInfo])
+        setFormData((preState) => ({
+            ...preState,
+            name: userInfo.name,
+            email: userInfo.email,
+        }))
+    }, [])
+
 
     const handleChange = (e) => {
         setFormData((preState) => ({
@@ -32,18 +38,13 @@ function LoginScreen() {
         }))
     }
 
+
     const handleSubmit = async (e) => {
         e.preventDefault()
-        //we shouyld login and set credentials
         try {
-            const res = await login({
-                email,
-                password
-            }).unwrap()
+            const res = await update({ name, email, password }).unwrap()
             dispatch(setCredentials({ ...res }))
-
-            navigate("/")
-
+            toast.success("Profile updated")
         } catch (err) {
             toast.error(err?.data?.message || err.error)
         }
@@ -57,12 +58,24 @@ function LoginScreen() {
                 x: "0"
             }}
         >
-            <form onSubmit={handleSubmit} className=' form-control mx-auto max-w-lg p-2 border border-black rounded-m rounded-md bg-slate-500'>
+            <form onSubmit={handleSubmit} className=' mb-12 form-control mx-auto max-w-lg p-2 border border-black rounded-m rounded-md bg-slate-500'>
                 <h1 className='text-white font-bold ml-4 pt-5 text-2xl'>
-                    Login
+                    {userInfo.name} Profile
                 </h1>
                 <div className='mb-4 mt-4'>
-
+                    <div className='form-control'>
+                        <label htmlFor="name" className='label'>
+                            <span className=' label-text font-extralight text-lg'>Name</span>
+                        </label>
+                        <input
+                            type="text"
+                            id='name'
+                            className='input input-bordered  border-black input-sm w-full placeholder:font-extralight text-black'
+                            value={name}
+                            onChange={handleChange}
+                            placeholder='Enter your name'
+                        />
+                    </div>
                     <div className='form-control'>
                         <label htmlFor="email" className='label'>
                             <span className=' label-text'>Email</span>
@@ -89,18 +102,12 @@ function LoginScreen() {
                             placeholder='Enter your password'
                         />
                     </div>
-                    {isLoading && <>
-                        <Loader />
-                    </>}
+                    {isLoading && <Loader />}
                     <div className='flex justify-between items-center'>
                         <button className='btn btn-sm btn-outline mt-4'>
-                            Sign In
+                            Update information
                         </button>
-                        <Link to="/register">
-                            <button className='btn btn-sm btn-info'>
-                                Do not have ann account?
-                            </button>
-                        </Link>
+
                     </div>
                 </div>
 
@@ -110,4 +117,4 @@ function LoginScreen() {
     )
 }
 
-export default LoginScreen
+export default ProfileScreen

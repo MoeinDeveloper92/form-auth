@@ -101,6 +101,7 @@ const updateUserProfile = asyncHandler(async (req, res, next) => {
             user.password = req.body.password
         }
 
+        //here again mongoose middelware for hashuin the password gets called
         const updatedUser = await user.save()
         res.status(200).json({
             _id: updatedUser._id,

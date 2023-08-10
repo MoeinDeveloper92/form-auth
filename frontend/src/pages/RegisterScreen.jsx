@@ -1,14 +1,36 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from "framer-motion"
+import { useRegisterMutation } from '../slices/usersApiSlice'
+import { toast } from "react-toastify"
+import { useSelector, useDispatch } from 'react-redux'
+import { setCredentials } from '../slices/authSlice'
+import Loader from '../components/Loader'
 function RegisterScreen() {
+
+
     const [fomrData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
         password2: ""
     })
+
+
     const { name, email, password, password2 } = fomrData
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+
+    const { userInfo } = useSelector((state) => state.auth)
+    const [register, { isLoading }] = useRegisterMutation()
+
+
+    useEffect(() => {
+        if (userInfo) {
+            navigate("/")
+        }
+    }, [navigate, userInfo])
 
 
     const handleChange = (e) => {
@@ -21,6 +43,20 @@ function RegisterScreen() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        if (password !== password2) {
+            toast.error("Passwords does not match")
+        } else {
+            try {
+                const res = await register({
+                    name, email, password
+                }).unwrap()
+                dispatch(setCredentials({ ...res }))
+                navigate("/")
+            } catch (err) {
+                toast.error(err?.data?.message)
+            }
+        }
+
     }
     return (
         <motion.div
@@ -31,7 +67,7 @@ function RegisterScreen() {
                 x: "0"
             }}
         >
-            <form onSubmit={handleSubmit} className=' form-control mx-auto max-w-lg p-2 border border-black rounded-m rounded-md bg-slate-500'>
+            <form onSubmit={handleSubmit} className=' mb-12 form-control mx-auto max-w-lg p-2 border border-black rounded-m rounded-md bg-slate-500'>
                 <h1 className='text-white font-bold ml-4 pt-5 text-2xl'>
                     Sign Up
                 </h1>
@@ -88,6 +124,7 @@ function RegisterScreen() {
                             placeholder='Confirmation password'
                         />
                     </div>
+                    {isLoading && <Loader />}
                     <div className='flex justify-between items-center'>
                         <button className='btn btn-sm btn-outline mt-4'>
                             Register

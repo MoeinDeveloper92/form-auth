@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from "framer-motion"
+
 function HomeScreen() {
     return (
         <motion.div
@@ -10,8 +11,9 @@ function HomeScreen() {
             animate={{
                 x: 0
             }}
+
         >
-            <div className="hero bg-gray-200 mx-auto rounded-md border border-black sm:max-w-sm md:max-w-md xl:max-w-lg">
+            <div className="hero bg-gray-200 mx-auto rounded-md border border-black sm:max-w-sm md:max-w-md xl:max-w-lg flex-1 flex justify-center items-center">
                 <div className="hero-content text-center">
                     <div className="max-w-md">
                         <h1 className='sm:text-3xl font-bold md:text-4xl'>MERN Authentication</h1>
