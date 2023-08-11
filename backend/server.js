@@ -4,9 +4,13 @@ import cookieParser from "cookie-parser"
 import userRoutes from "../backend/routes/userRoutes.js"
 import { notFound, errorHandler } from "../backend/middleware/errorMiddleware.js"
 import connectDB from './config/db.js'
+
+
 import path from "path"
 import { dirname } from "path"
 import { fileURLToPath } from 'url'
+
+
 dotenv.config()
 const PORT = process.env.PORT || 5000
 connectDB()
